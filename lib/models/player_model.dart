@@ -1,0 +1,61 @@
+class PlayerModel {
+  const PlayerModel({
+    required this.id,
+    required this.name,
+    required this.position,
+    required this.baseFitness,
+    required this.injuryHistory,
+  });
+
+  final String id;
+  final String name;
+  final String position;
+  final int baseFitness;
+  final int injuryHistory;
+
+  factory PlayerModel.fromJson(Map<String, dynamic> json) {
+    return PlayerModel(
+      id: _stringFrom(json, ['id', '_id', 'playerId']) ?? '',
+      name: _stringFrom(json, ['name', 'fullName', 'playerName']) ?? 'Unknown',
+      position: _stringFrom(json, ['position', 'role']) ?? 'Unknown',
+      baseFitness: _intFrom(json, ['baseFitness', 'fitness', 'base_fitness']),
+      injuryHistory: _intFrom(json, [
+        'injuryHistory',
+        'injuries',
+        'injury_history',
+      ]),
+    );
+  }
+
+  static String? _stringFrom(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value is String && value.isNotEmpty) {
+        return value;
+      }
+      if (value != null) {
+        return value.toString();
+      }
+    }
+    return null;
+  }
+
+  static int _intFrom(Map<String, dynamic> json, List<String> keys) {
+    for (final key in keys) {
+      final value = json[key];
+      if (value is int) {
+        return value;
+      }
+      if (value is double) {
+        return value.round();
+      }
+      if (value is String) {
+        final parsed = int.tryParse(value);
+        if (parsed != null) {
+          return parsed;
+        }
+      }
+    }
+    return 0;
+  }
+}
